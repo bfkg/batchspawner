@@ -634,7 +634,7 @@ singularity run $SINGULARITYENV_CONTAINER_PATH {cmd}
         ).tag(config=True)
 
     # outputs line like "Submitted batch job 209"
-    batch_submit_cmd = Unicode('sbatch --parsable').tag(config=True)
+    batch_submit_cmd = Unicode("""'sbatch --parsable'""").tag(config=True)
     # outputs status and exec node like "RUNNING hostname"
     batch_query_cmd = Unicode("squeue -h -j {job_id} -o '%T %B'").tag(config=True) #
     batch_cancel_cmd = Unicode('scancel {job_id}').tag(config=True)
