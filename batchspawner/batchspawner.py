@@ -585,8 +585,7 @@ class UserEnvMixin:
 
 
 class SlurmSpawner(UserEnvMixin,BatchSpawnerRegexStates):
-    batch_script = Unicode("""
-#!/bin/bash
+    batch_script = Unicode("""#!/bin/bash
 #SBATCH --partition={partition}
 #SBATCH --qos={qos}
 #SBATCH --account={account}
@@ -617,7 +616,7 @@ singularity run \
   --bind /etc/slurm \
   --bind /etc/pam.d \
   $SINGULARITYENV_CONTAINER_PATH {cmd}
-"""
+""").tag(config=True)
 
     # all these req_foo traits will be available as substvars for templated strings
     req_cluster = Unicode('',
