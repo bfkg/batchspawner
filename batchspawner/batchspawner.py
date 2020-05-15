@@ -598,24 +598,8 @@ class SlurmSpawner(UserEnvMixin,BatchSpawnerRegexStates):
 #SBATCH --export={keepvars}
 #SBATCH --uid={username).tag(config=True)
 
-module load tools/singularity/3.5.3-go-1.14
+sleep 10
 
-# jupyter-singleuser anticipates that environment will be dropped during sudo, however
-# it is retained by batchspawner. The XDG_RUNTIME_DIR variable must be unset to force a
-# fallback, otherwise a permissions error occurs when starting the notebook.
-# https://github.com/jupyter/notebook/issues/1318
-
-export SINGULARITYENV_JUPYTERHUB_API_TOKEN=$JUPYTERHUB_API_TOKEN
-export SINGULARITYENV_XDG_RUNTIME_DIR=$HOME/.singularity-jupyter-run
-export SINGULARITYENV_CONTAINER_PATH={image_path}
-echo {keepvars}
-singularity run \
-  --bind /var/lib/sss/pipes \
-  --bind /home/{username} \  
-  --bind /var/run/munge \
-  --bind /etc/slurm \
-  --bind /etc/pam.d \
-  $SINGULARITYENV_CONTAINER_PATH {cmd}
 """).tag(config=True)
 
     # all these req_foo traits will be available as substvars for templated strings
