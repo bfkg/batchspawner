@@ -21,7 +21,6 @@ import pwd
 import os
 import re
 import sys
-import pdb 
 
 import xml.etree.ElementTree as ET
 
@@ -84,7 +83,7 @@ class BatchSpawnerBase(Spawner):
     # override default server ip since batch jobs normally running remotely
     ip = Unicode("0.0.0.0", help="Address for singleuser server to listen at").tag(config=True)
 
-    exec_prefix = Unicode('sudo -E -u {username}',
+    exec_prefix = Unicode('su - {username} --preserve-environment -c',
         help="Standard executon prefix (e.g. the default sudo -E -u {username})"
         ).tag(config=True)
 
@@ -236,7 +235,6 @@ class BatchSpawnerBase(Spawner):
         return format_template(self.batch_script, **subvars)
 
     async def submit_batch_script(self):
-        pdb.set_trace()
         subvars = self.get_req_subvars()
         # `cmd` is submitted to the batch system
         cmd = ' '.join((format_template(self.exec_prefix, **subvars),
@@ -587,25 +585,39 @@ class UserEnvMixin:
 
 
 class SlurmSpawner(UserEnvMixin,BatchSpawnerRegexStates):
-    batch_script = Unicode("""#!/bin/bash
-#SBATCH --output={{homedir}}/jupyterhub_slurmspawner_%j.log
+    batch_script = Unicode("""
+#!/bin/bash
+#SBATCH --partition={partition}
+#SBATCH --qos={qos}
+#SBATCH --account={account}
+#SBATCH --time={runtime}
+#SBATCH --nodes={nodes}
+#SBATCH --ntasks-per-node={ntasks}
+#SBATCH --output={homedir}/.jupyterhub-slurmspawner.log
+#SBATCH --open-mode=append
 #SBATCH --job-name=spawner-jupyterhub
-#SBATCH --export={{keepvars}}
-#SBATCH --get-user-env=L
-{% if partition  %}#SBATCH --partition={{partition}}
-{% endif %}{% if runtime    %}#SBATCH --time={{runtime}}
-{% endif %}{% if memory     %}#SBATCH --mem={{memory}}
-{% endif %}{% if nprocs     %}#SBATCH --cpus-per-task={{nprocs}}
-{% endif %}{% if reservation%}#SBATCH --reservation={{reservation}}
-{% endif %}{% if options    %}#SBATCH {{options}}{% endif %}
+#SBATCH --export={keepvars}
+#SBATCH --uid={username).tag(config=True)
 
-trap 'echo SIGTERM received' TERM
-{{prologue}}
-which jupyterhub-singleuser
-{% if srun %}{{srun}} {% endif %}{{cmd}}
-echo "jupyterhub-singleuser ended gracefully"
-{{epilogue}}
-""").tag(config=True)
+module load tools/singularity/3.5.3-go-1.14
+
+# jupyter-singleuser anticipates that environment will be dropped during sudo, however
+# it is retained by batchspawner. The XDG_RUNTIME_DIR variable must be unset to force a
+# fallback, otherwise a permissions error occurs when starting the notebook.
+# https://github.com/jupyter/notebook/issues/1318
+
+export SINGULARITYENV_JUPYTERHUB_API_TOKEN=$JUPYTERHUB_API_TOKEN
+export SINGULARITYENV_XDG_RUNTIME_DIR=$HOME/.singularity-jupyter-run
+export SINGULARITYENV_CONTAINER_PATH={image_path}
+echo {keepvars}
+singularity run \
+  --bind /var/lib/sss/pipes \
+  --bind /home/{username} \  
+  --bind /var/run/munge \
+  --bind /etc/slurm \
+  --bind /etc/pam.d \
+  $SINGULARITYENV_CONTAINER_PATH {cmd}
+"""
 
     # all these req_foo traits will be available as substvars for templated strings
     req_cluster = Unicode('',
