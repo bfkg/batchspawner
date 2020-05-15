@@ -21,6 +21,7 @@ import pwd
 import os
 import re
 import sys
+import pdb 
 
 import xml.etree.ElementTree as ET
 
@@ -235,6 +236,7 @@ class BatchSpawnerBase(Spawner):
         return format_template(self.batch_script, **subvars)
 
     async def submit_batch_script(self):
+        pdb.set_trace()
         subvars = self.get_req_subvars()
         # `cmd` is submitted to the batch system
         cmd = ' '.join((format_template(self.exec_prefix, **subvars),
