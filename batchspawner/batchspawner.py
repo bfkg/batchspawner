@@ -596,9 +596,21 @@ class SlurmSpawner(UserEnvMixin,BatchSpawnerRegexStates):
 #SBATCH --open-mode=append
 #SBATCH --job-name=spawner-jupyterhub
 #SBATCH --export={keepvars}
-#SBATCH --uid={username).tag(config=True)
+#SBATCH --uid={username}
 
-sleep 10
+module load tools/singularity/3.5.3-go-1.14
+
+# jupyter-singleuser anticipates that environment will be dropped during sudo, however
+# it is retained by batchspawner. The XDG_RUNTIME_DIR variable must be unset to force a
+# fallback, otherwise a permissions error occurs when starting the notebook.
+# https://github.com/jupyter/notebook/issues/1318
+
+export SINGULARITYENV_JUPYTERHUB_API_TOKEN=$JUPYTERHUB_API_TOKEN
+export SINGULARITYENV_XDG_RUNTIME_DIR=$HOME/.singularity-jupyter-run
+export SINGULARITYENV_CONTAINER_PATH={image_path}
+echo {keepvars}
+singularity run $SINGULARITYENV_CONTAINER_PATH {cmd}
+
 
 """).tag(config=True)
 
