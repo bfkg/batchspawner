@@ -607,8 +607,9 @@ module load tools/singularity/3.5.3-go-1.14
 
 export SINGULARITYENV_JUPYTERHUB_API_TOKEN=$JUPYTERHUB_API_TOKEN
 export SINGULARITYENV_XDG_RUNTIME_DIR=$HOME/.singularity-jupyter-run
-export SINGULARITYENV_CONTAINER_PATH={image_path}
+export  ={image_path}
 echo {keepvars}
+echo $SINGULARITYENV_CONTAINER_PATH
 singularity run $SINGULARITYENV_CONTAINER_PATH {cmd}
 
 
