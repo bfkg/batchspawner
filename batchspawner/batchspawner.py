@@ -585,7 +585,7 @@ class UserEnvMixin:
 
 
 class SlurmSpawner(UserEnvMixin,BatchSpawnerRegexStates):
-    batch_script = Unicode("""#!/bin/bash
+    batch_script = Unicode("""#!/bin/csh
 #SBATCH --partition={partition}
 #SBATCH --qos={qos}
 #SBATCH --account={account}
@@ -605,14 +605,12 @@ module load tools/singularity/3.5.3-go-1.14
 # fallback, otherwise a permissions error occurs when starting the notebook.
 # https://github.com/jupyter/notebook/issues/1318
 
-export SINGULARITYENV_JUPYTERHUB_API_TOKEN=$JUPYTERHUB_API_TOKEN
-export SINGULARITYENV_XDG_RUNTIME_DIR=$HOME/.singularity-jupyter-run
-export SINGULARITYENV_CONTAINER_PATH={image_path}
+setenv SINGULARITYENV_JUPYTERHUB_API_TOKEN $JUPYTERHUB_API_TOKEN
+setenv SINGULARITYENV_XDG_RUNTIME_DIR $HOME/.singularity-jupyter-run
+setenv SINGULARITYENV_CONTAINER_PATH {image_path}
 echo {keepvars}
 echo $SINGULARITYENV_CONTAINER_PATH
 singularity run $SINGULARITYENV_CONTAINER_PATH #{cmd}
-
-
 """).tag(config=True)
 
     # all these req_foo traits will be available as substvars for templated strings
