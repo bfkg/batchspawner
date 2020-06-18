@@ -382,7 +382,8 @@ class BatchSpawnerBase(Spawner):
                            ' while pending in the queue or died immediately'
                            ' after starting.')
             await gen.sleep(self.startup_poll_interval)
-
+        self.log.info('Job is in running state. Now need to get the notebook server address...')
+        pdb.set_trace()
         self.ip = self.state_gethost()
         while self.port == 0:
             await gen.sleep(self.startup_poll_interval)
