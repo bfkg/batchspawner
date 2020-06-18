@@ -277,6 +277,7 @@ class BatchSpawnerBase(Spawner):
         try:
             out = await self.run_command(cmd)
             self.job_status = out
+            self.log.debug('Job state:' + out)
         except Exception as e:
             self.log.error('Error querying job ' + self.job_id)
             self.job_status = ''
@@ -336,7 +337,6 @@ class BatchSpawnerBase(Spawner):
         """Poll the process"""
         if self.job_id is not None and len(self.job_id) > 0:
             await self.read_job_state()
-            pdb.set_trace()
             if self.state_isrunning() or self.state_ispending():
                 return None
             else:
