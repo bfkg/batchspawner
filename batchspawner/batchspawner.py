@@ -615,7 +615,7 @@ setenv SINGULARITYENV_XDG_RUNTIME_DIR $HOME/.singularity-jupyter-run
 setenv SINGULARITYENV_CONTAINER_PATH {image_path}
 echo {keepvars}
 echo $SINGULARITYENV_CONTAINER_PATH
-singularity run $SINGULARITYENV_CONTAINER_PATH #{cmd}
+singularity run $SINGULARITYENV_CONTAINER_PATH {cmd}
 """).tag(config=True)
 
     # all these req_foo traits will be available as substvars for templated strings
