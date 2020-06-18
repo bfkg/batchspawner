@@ -161,7 +161,8 @@ class BatchSpawnerBase(Spawner):
              "Must include {cmd} which will be replaced with the jupyterhub-singleuser command line."
         ).tag(config=True)
 
-    batchspawner_singleuser_cmd = Unicode('batchspawner-singleuser',
+    #batchspawner_singleuser_cmd = Unicode('batchspawner-singleuser',
+    batchspawner_singleuser_cmd = Unicode('',
         help="A wrapper which is capable of special batchspawner setup: currently sets the port on "
              "the remote host.  Not needed to be set under normal circumstances, unless path needs "
              "specification."
