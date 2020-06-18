@@ -384,7 +384,7 @@ class BatchSpawnerBase(Spawner):
                            ' after starting.')
             await gen.sleep(self.startup_poll_interval)
         self.log.info('Job is in running state. Now need to get the notebook server address...')
-        self.port = 8889
+        self.port = 8888
         self.ip = self.state_gethost()
         while self.port == 0:
             await gen.sleep(self.startup_poll_interval)
@@ -613,8 +613,11 @@ module load tools/singularity/3.5.3-go-1.14
 setenv SINGULARITYENV_JUPYTERHUB_API_TOKEN $JUPYTERHUB_API_TOKEN
 setenv SINGULARITYENV_XDG_RUNTIME_DIR $HOME/.singularity-jupyter-run
 setenv SINGULARITYENV_CONTAINER_PATH {image_path}
-echo {keepvars}
+
+echo
 echo $SINGULARITYENV_CONTAINER_PATH
+echo
+
 singularity run $SINGULARITYENV_CONTAINER_PATH {cmd}
 """).tag(config=True)
 
