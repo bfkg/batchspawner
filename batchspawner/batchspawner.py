@@ -22,6 +22,8 @@ import os
 import re
 import sys
 
+import pdb
+
 import xml.etree.ElementTree as ET
 
 from jinja2 import Template
@@ -334,6 +336,7 @@ class BatchSpawnerBase(Spawner):
         """Poll the process"""
         if self.job_id is not None and len(self.job_id) > 0:
             await self.read_job_state()
+            pdb.set_trace()
             if self.state_isrunning() or self.state_ispending():
                 return None
             else:
