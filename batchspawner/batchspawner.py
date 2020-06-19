@@ -30,8 +30,8 @@ from jinja2 import Template
 
 from tornado import gen
 from tornado.process import Subprocess
-from subprocess import (
-    CalledProcessError, Popen)
+#from subprocess import CalledProcessError
+import subprocess
 from tornado.iostream import StreamClosedError
 
 from jupyterhub.spawner import Spawner
@@ -386,7 +386,8 @@ class BatchSpawnerBase(Spawner):
             await gen.sleep(self.startup_poll_interval)
         self.log.info('Job is in running state. Now need to get the notebook server address...')
         #ssh keal cat ~fersch-b/.jupyterhub-slurmspawner.log | grep keal2: | tail -n 1 | awk -F : '{print $NF}' | awk -F \/ '{print $1}'
-        ssh=subprocess.Popen(['ssh','keal', '~/'+self.user.name+'.jupyterhub-slurmspawner.log'])
+        ssh=subprocess.Popen(['ssh','keal', '~/'+self.user.name+'.jupyterhub-slurmspawner.log'],
+                       stdout=subprocess.PIPE)
         pdb.set_trace()
         self.port = 8888
         self.ip = self.state_gethost()
