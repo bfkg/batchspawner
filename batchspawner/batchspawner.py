@@ -32,6 +32,7 @@ from tornado import gen
 from tornado.process import Subprocess
 #from subprocess import CalledProcessError
 import subprocess
+import time
 from tornado.iostream import StreamClosedError
 
 from jupyterhub.spawner import Spawner
