@@ -630,7 +630,7 @@ echo
 echo $SINGULARITYENV_CONTAINER_PATH
 echo
 
-singularity run $SINGULARITYENV_CONTAINER_PATH {cmd}
+singularity run --writable-tmpfs $SINGULARITYENV_CONTAINER_PATH {cmd}
 """).tag(config=True)
 
     # all these req_foo traits will be available as substvars for templated strings
