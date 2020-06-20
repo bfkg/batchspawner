@@ -632,7 +632,9 @@ setenv SINGULARITYENV_JUPYTERHUB_API_TOKEN $JUPYTERHUB_API_TOKEN
 setenv SINGULARITYENV_XDG_RUNTIME_DIR $HOME/.singularity-jupyter-run
 setenv SINGULARITYENV_CONTAINER_PATH {image_path}
 
+# move old logs out of the way and create empty log file
 mv $HOME/.singularity-jupyter-run $HOME/.singularity-jupyter-run.old 2>/dev/null
+touch $HOME/.singularity-jupyter-run
 
 echo
 echo $SINGULARITYENV_CONTAINER_PATH
