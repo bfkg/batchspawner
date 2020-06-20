@@ -386,11 +386,15 @@ class BatchSpawnerBase(Spawner):
             await gen.sleep(self.startup_poll_interval)
         self.log.info('Job is in running state. Now need to get the notebook server address...')
         #ssh keal cat ~fersch-b/.jupyterhub-slurmspawner.log | grep keal2: | tail -n 1 | awk -F : '{print $NF}' | awk -F \/ '{print $1}'
-        ssh=subprocess.Popen(['ssh','keal', '~/'+self.user.name+'.jupyterhub-slurmspawner.log'],
-                       stdout=subprocess.PIPE)
-        pdb.set_trace()
-        self.port = 8888
+        #ssh=subprocess.Popen(['ssh','keal', '~/'+self.user.name+'.jupyterhub-slurmspawner.log'],
+                       #stdout=subprocess.PIPE)
         self.ip = self.state_gethost()
+        cmd='ssh keal cat ~'+self.user.name+'/.jupyterhub-slurmspawner.log | grep '+self.ip+': | tail -n 1 | awk -F : \'{print $NF}\' | awk -F \\/ \'{print $1}\''
+        ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        output = ps.communicate()[0]
+        self.port = int(output)
+        
+        pdb.set_trace()
         while self.port == 0:
             await gen.sleep(self.startup_poll_interval)
             # Test framework: For testing, mock_port is set because we
