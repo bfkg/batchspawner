@@ -388,7 +388,10 @@ class BatchSpawnerBase(Spawner):
 
         self.ip = self.state_gethost()
         
+        
         # get port from singleuser server logfile
+        
+        time.sleep(5) # wait for server to startup and write logfile
         cmd='ssh keal tail -n 100 ~'+self.user.name+'/.jupyterhub-slurmspawner.log | grep '+self.ip+': | tail -n 1 | awk -F : \'{print $NF}\' | awk -F \\/ \'{print $1}\''
         ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
         output = ps.communicate()[0]
