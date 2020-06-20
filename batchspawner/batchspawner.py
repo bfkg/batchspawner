@@ -392,7 +392,7 @@ class BatchSpawnerBase(Spawner):
         
         # get port from singleuser server logfile
         
-        time.sleep(10) # wait for server to startup and write logfile
+        time.sleep(15) # wait for server to startup and write logfile
         cmd='ssh keal tail -n 100 ~'+self.user.name+'/.jupyterhub-slurmspawner.log | grep '+self.ip+': | tail -n 1 | awk -F : \'{print $NF}\' | awk -F \\/ \'{print $1}\''
         ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
         output = ps.communicate()[0]
@@ -625,6 +625,8 @@ module load tools/singularity/3.5.3-go-1.14
 setenv SINGULARITYENV_JUPYTERHUB_API_TOKEN $JUPYTERHUB_API_TOKEN
 setenv SINGULARITYENV_XDG_RUNTIME_DIR $HOME/.singularity-jupyter-run
 setenv SINGULARITYENV_CONTAINER_PATH {image_path}
+
+mv $HOME/.singularity-jupyter-run $HOME/.singularity-jupyter-run.old 2>/dev/null
 
 echo
 echo $SINGULARITYENV_CONTAINER_PATH
