@@ -392,14 +392,20 @@ class BatchSpawnerBase(Spawner):
         
         # get port from singleuser server logfile
         
-        time.sleep(15) # wait for server to startup and write logfile
-        cmd='ssh keal tail -n 100 ~'+self.user.name+'/.jupyterhub-slurmspawner.log | grep '+self.ip+': | tail -n 1 | awk -F : \'{print $NF}\' | awk -F \\/ \'{print $1}\''
-        ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-        output = ps.communicate()[0]
-        self.port = int(output)
+        #time.sleep(15) # wait for server to startup and write logfile
         
         while self.port == 0:
             await gen.sleep(self.startup_poll_interval)
+            
+            cmd='ssh keal cat ~'+self.user.name+'/.jupyterhub-slurmspawner.log | grep '+self.ip+': | tail -n 1 | awk -F : \'{print $NF}\' | awk -F \\/ \'{print $1}\''
+            ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+            output = ps.communicate()[0]
+            try:
+                self.port = int(output)
+                break
+            except ValueError:
+                self.log.info('Notebook server port information not yet available.')
+
             # Test framework: For testing, mock_port is set because we
             # don't actually run the single-user server yet.
             if hasattr(self, 'mock_port'):
