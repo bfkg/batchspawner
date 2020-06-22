@@ -629,11 +629,12 @@ module load tools/singularity/3.5.3-go-1.14
 # https://github.com/jupyter/notebook/issues/1318
 
 setenv SINGULARITYENV_JUPYTERHUB_API_TOKEN $JUPYTERHUB_API_TOKEN
-setenv SINGULARITYENV_XDG_RUNTIME_DIR $HOME/.singularity-jupyter-run
+setenv SINGULARITYENV_XDG_RUNTIME_DIR $HOME/.singularity-jupyter-run.log
 setenv SINGULARITYENV_CONTAINER_PATH {image_path}
 
 # move old logs out of the way and create empty log file
-mv $HOME/.singularity-jupyter-run.log $HOME/.singularity-jupyter-run.old 2>/dev/null
+mv $HOME/.singularity-jupyter-run.log $HOME/.singularity-jupyter-run.old
+
 touch $HOME/.singularity-jupyter-run.log
 
 echo
