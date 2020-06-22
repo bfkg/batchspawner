@@ -616,10 +616,10 @@ class SlurmSpawner(UserEnvMixin,BatchSpawnerRegexStates):
 #SBATCH --nodes={nodes}
 #SBATCH --ntasks-per-node={ntasks}
 #SBATCH --output={homedir}/.jupyterhub-slurmspawner.log
-#SBATCH --open-mode=append
+#SBATCH --open-mode=truncate
 #SBATCH --job-name=spawner-jupyterhub
 #SBATCH --export={keepvars}
-#SBATCH --uid={username}
+#SBATCH --uid={username} 
 
 module load tools/singularity/3.5.3-go-1.14
 
@@ -632,11 +632,9 @@ setenv SINGULARITYENV_JUPYTERHUB_API_TOKEN $JUPYTERHUB_API_TOKEN
 setenv SINGULARITYENV_XDG_RUNTIME_DIR $HOME/.singularity-jupyter-run
 setenv SINGULARITYENV_CONTAINER_PATH {image_path}
 
-# move old logs out of the way and create empty log file
-mv $HOME/.jupyterhub-slurmspawner.log $HOME/.jupyterhub-slurmspawner.old 2>/dev/null
 touch $HOME/.jupyterhub-slurmspawner.log
 
-echo
+echo Running container:
 echo $SINGULARITYENV_CONTAINER_PATH
 echo
 
