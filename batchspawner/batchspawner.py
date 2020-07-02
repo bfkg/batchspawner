@@ -638,7 +638,7 @@ echo Running container:
 echo $SINGULARITYENV_CONTAINER_PATH
 echo
 
-singularity run --writable-tmpfs $SINGULARITYENV_CONTAINER_PATH {cmd}
+singularity run -B /var/run/munge --writable-tmpfs $SINGULARITYENV_CONTAINER_PATH {cmd}
 """).tag(config=True)
 
     # all these req_foo traits will be available as substvars for templated strings
